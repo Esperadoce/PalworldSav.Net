@@ -1,6 +1,6 @@
 # PalWorld.Sav.Serializer
 
-This project is a .NET library for serializing and deserializing Unreal Engine save files. It uses a Rust library, `ue_gvas_handler`, which is a wrapper around the `uesave` Rust crate.
+This project is a .NET library for serializing and deserializing Unreal Engine save files. It uses a Rust library, `uesave`, which is a wrapper around the `uesave` Rust crate.
 
 ## Getting Started
 
