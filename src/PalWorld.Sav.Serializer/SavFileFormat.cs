@@ -1,4 +1,6 @@
-namespace PalWorldSavSerializer;
+using System;
+
+namespace PalWorld.Sav.Serializer;
 
 /// <summary>
 /// Represents a .sav binary file format.
@@ -41,6 +43,7 @@ public class SavFileFormat(
         return $"FilePath : {FilePath}" + Environment.NewLine +
                $"LenDecompressed : {LenDecompressed}" + Environment.NewLine +
                $"LenCompressed : {LenCompressed}," + Environment.NewLine +
-               $"Magic : {Magic}," + Environment.NewLine;
+               $"Magic : {Magic}," + Environment.NewLine +
+               $"DecompressedData : {DecompressedData}," + Environment.NewLine;
     }
 }

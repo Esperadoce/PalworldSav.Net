@@ -1,6 +1,10 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 
-namespace PalWorldSavSerializer;
+namespace PalWorld.Sav.Serializer;
 
 /// <summary>
 /// Provides methods for serializing and deserializing data in the Unreal Engine save format.
@@ -80,16 +84,16 @@ public class UeSave
 
     private static class InternalBridge
     {
-        [DllImport("bridge_ffi_ue")]
+        [DllImport("ue_gvas_handler.dll")]
         public static extern IntPtr deserialize(IntPtr buffer, UIntPtr size, KeyValuePair[] map, int mapLength);
 
-        [DllImport("bridge_ffi_ue", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("ue_gvas_handler.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr serialize(string data, out UIntPtr size);
 
-        [DllImport("bridge_ffi_ue")]
+        [DllImport("ue_gvas_handler.dll")]
         public static extern void free_rust_string(IntPtr s);
-
-        [DllImport("bridge_ffi_ue")]
+            
+        [DllImport("ue_gvas_handler.dll")]
         public static extern void free_rust_vec(IntPtr p);
     }
 }

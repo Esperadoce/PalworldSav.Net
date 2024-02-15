@@ -1,9 +1,9 @@
 [package]
-name = "ue_gvas_handler"
+name = "ue-gvas-handler"
 version = "0.1.0"
 
 [lib]
-name = "bridge_ffi_ue"
+name = "ue_gvas_handler"
 path = "src/bridge.rs"
 crate-type = ["cdylib"]
 

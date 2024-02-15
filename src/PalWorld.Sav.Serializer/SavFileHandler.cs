@@ -1,6 +1,9 @@
-﻿using System.IO.Compression;
+﻿using System;
+using System.IO;
+using System.IO.Compression;
+using System.Threading.Tasks;
 
-namespace PalWorldSavSerializer;
+namespace PalWorld.Sav.Serializer;
 
 /// <summary>
 /// Handles .sav files.
@@ -43,12 +46,13 @@ public class SavFileHandler
                     await deflateStream.CopyToAsync(result);
                     decompressedData = result.ToArray();
                 }
+
                 break;
             default:
                 throw new Exception("Unsupported magic number.");
         }
 
-        return new SavFileFormat (filepath,lenDecompressed, lenCompressed, magic, decompressedData);
+        return new SavFileFormat(filepath, lenDecompressed, lenCompressed, magic, decompressedData);
     }
 
     private async Task<int> ReadIntAsync(Stream stream)
@@ -57,3 +61,4 @@ public class SavFileHandler
         await stream.ReadExactlyAsync(buffer, 0, sizeof(int));
         return BitConverter.ToInt32(buffer, 0);
     }
+}
