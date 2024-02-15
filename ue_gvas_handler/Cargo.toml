@@ -1,0 +1,13 @@
+[package]
+name = "ue_gvas_handler"
+version = "0.1.0"
+
+[lib]
+name = "bridge_ffi_ue"
+path = "src/bridge.rs"
+crate-type = ["cdylib"]
+
+[dependencies]
+uesave = { git = "https://github.com/trumank/uesave-rs" }
+serde_json = { version = "1.0.111", features = ["preserve_order"] }
+libc = "0.2.153"
