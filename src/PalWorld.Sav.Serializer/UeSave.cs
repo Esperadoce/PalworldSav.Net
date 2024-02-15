@@ -9,7 +9,7 @@ namespace PalWorld.Sav.Serializer;
 /// <summary>
 /// Provides methods for serializing and deserializing data in the Unreal Engine save format.
 /// </summary>
-public class UeSave
+public static class UeSave
 {
     
     /// <summary>
@@ -18,7 +18,7 @@ public class UeSave
     /// <param name="data">The data to deserialize.</param>
     /// <param name="map">The map to use for deserialization.</param>
     /// <returns>The deserialized data as a string.</returns>
-    public async Task<string?> DeserializeAsync(byte[] data, Dictionary<string, string> map)
+    public static async Task<string?> DeserializeAsync(byte[] data, Dictionary<string, string> map)
     {
         if (data == null || data.Length == 0)
         {
@@ -49,7 +49,7 @@ public class UeSave
     /// </summary>
     /// <param name="json">The JSON string to serialize.</param>
     /// <returns>The serialized data as a Sav data byte array.</returns>
-    public async Task<Memory<byte>> SerializeAsync(string json)
+    public static async Task<Memory<byte>> SerializeAsync(string json)
     {
         if (string.IsNullOrEmpty(json))
         {
