@@ -30,18 +30,25 @@ public static class UeSave
         }
 
         GCHandle handle = GCHandle.Alloc(data, GCHandleType.Pinned);
-        IntPtr pointer = handle.AddrOfPinnedObject();
+        try
+        {
+            IntPtr pointer = handle.AddrOfPinnedObject();
 
-        // Call the deserialize function on a separate thread
-        IntPtr result = await Task.Run(() => 
-            InternalBridge.deserialize(pointer, (UIntPtr)data.Length, map.Select(kv => new KeyValuePair { Key = kv.Key, Value = kv.Value }).ToArray(), map.Count));
+            // Call the deserialize function on a separate thread
+            IntPtr result = await Task.Run(() =>
+                InternalBridge.deserialize(pointer, (UIntPtr)data.Length, map.Select(kv => new KeyValuePair { Key = kv.Key, Value = kv.Value }).ToArray(), map.Count));
 
-        string? resultString = Marshal.PtrToStringAnsi(result);
+            string? resultString = Marshal.PtrToStringAnsi(result);
 
-        InternalBridge.free_rust_string(result);
-        handle.Free();
+            InternalBridge.free_rust_string(result);
+        
+            return resultString;
+        }
+        finally
+        {
+            handle.Free();
+        }
 
-        return resultString;
     }
 
     /// <summary>
