@@ -8,7 +8,7 @@ The project is structured as follows:
 
 - `src/PalWorld.Sav.Serializer`: This is the .NET wrapper around the Rust library. It provides a `UeSave` class that you can use to serialize and deserialize data in the Unreal Engine save format.
 
-- `src/ue_gvas_handler`: This is the Rust library that does the actual serialization and deserialization. It uses the `uesave` Rust crate to decompress GVAS files.
+- `src/ue_gvas_handler`: This is the Rust library that does the actual serialization and deserialization. It uses the `uesave` Rust crate to deserialize GVAS data.
 
 - `examples/PalWorld.Sav.Examples.Deserializer`: This is an example project that shows how to use the `PalWorld.Sav.Serializer` library.
 
