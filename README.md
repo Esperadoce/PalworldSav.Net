@@ -34,5 +34,4 @@ The project is structured as follows:
 In your C# code, you can use the `UeSave` class like this:
 
 ```csharp
-var ueSave = new UeSave();
 string? result = await ueSave.DeserializeAsync(data, map);
