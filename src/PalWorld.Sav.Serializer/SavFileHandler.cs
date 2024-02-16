@@ -42,8 +42,7 @@ public static class SavFileHandler
         var magic = await ReadIntAsync(stream);
 
         byte[] decompressedData;
-        byte zlibHeader = (byte)stream.ReadByte();
-        if (zlibHeader != ZlibHeader1 && zlibHeader != ZlibHeader2) //zlib header
+        if ((byte)stream.ReadByte() != ZlibHeader1 || (byte)stream.ReadByte() != ZlibHeader2) //zlib header
             throw new InvalidDataException("Incorrect zlib header");
 
         switch (magic >> 24)
