@@ -11,7 +11,6 @@ namespace PalWorld.Sav.Serializer;
 /// </summary>
 public static class UeSave
 {
-    
     /// <summary>
     /// Deserializes the provided data using the provided map.
     /// </summary>
@@ -29,14 +28,20 @@ public static class UeSave
             throw new ArgumentException("Map cannot be null or empty.", nameof(map));
         }
 
-        GCHandle handle = GCHandle.Alloc(data, GCHandleType.Pinned);
-        IntPtr pointer = handle.AddrOfPinnedObject();
+        var handle = GCHandle.Alloc(data, GCHandleType.Pinned);
+        var pointer = handle.AddrOfPinnedObject();
 
-        // Call the deserialize function on a separate thread
-        IntPtr result = await Task.Run(() => 
-            InternalBridge.deserialize(pointer, (UIntPtr)data.Length, map.Select(kv => new KeyValuePair { Key = kv.Key, Value = kv.Value }).ToArray(), map.Count));
+        var result = await Task.Run(
+            () =>
+                InternalBridge.deserialize(
+                    pointer,
+                    (UIntPtr)data.Length,
+                    map.Select(kv => new KeyValuePair { Key = kv.Key, Value = kv.Value }).ToArray(),
+                    map.Count
+                )
+        );
 
-        string? resultString = Marshal.PtrToStringAnsi(result);
+        var resultString = Marshal.PtrToStringAnsi(result);
 
         InternalBridge.free_rust_string(result);
         handle.Free();
@@ -56,16 +61,13 @@ public static class UeSave
             throw new ArgumentException("JSON string cannot be null or empty.", nameof(json));
         }
 
-        // Call the serialize function on a separate thread
         var result = await Task.Run(() =>
         {
-            UIntPtr size;
-            IntPtr ptr = InternalBridge.serialize(json, out size);
+            var ptr = InternalBridge.serialize(json, out var size);
             return (ptr, size);
         });
 
-        // Convert the result to a byte array
-        byte[] serializedData = new byte[result.size.ToUInt32()];
+        var serializedData = new byte[result.size.ToUInt32()];
         Marshal.Copy(result.ptr, serializedData, 0, serializedData.Length);
         InternalBridge.free_rust_vec(result.ptr);
 
@@ -84,16 +86,37 @@ public static class UeSave
 
     private static class InternalBridge
     {
-        [DllImport("ue_gvas_handler.dll")]
-        public static extern IntPtr deserialize(IntPtr buffer, UIntPtr size, KeyValuePair[] map, int mapLength);
+        private const string LibraryName = "unrealsaveserializer";
 
-        [DllImport("ue_gvas_handler.dll", CallingConvention = CallingConvention.Cdecl)]
+        static InternalBridge()
+        {
+            if (Environment.OSVersion.Platform == PlatformID.Unix)
+            {
+                NativeLibrary.SetDllImportResolver(
+                    typeof(InternalBridge).Assembly,
+                    (name, assembly, path) =>
+                        name == LibraryName
+                            ? NativeLibrary.Load("lib" + name, assembly, path)
+                            : IntPtr.Zero
+                );
+            }
+        }
+
+        [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern IntPtr deserialize(
+            IntPtr buffer,
+            UIntPtr size,
+            KeyValuePair[] map,
+            int mapLength
+        );
+
+        [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr serialize(string data, out UIntPtr size);
 
-        [DllImport("ue_gvas_handler.dll")]
+        [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl)]
         public static extern void free_rust_string(IntPtr s);
-            
-        [DllImport("ue_gvas_handler.dll")]
+
+        [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl)]
         public static extern void free_rust_vec(IntPtr p);
     }
 }

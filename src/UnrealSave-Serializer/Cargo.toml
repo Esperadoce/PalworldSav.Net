@@ -1,10 +1,10 @@
 [package]
-name = "ue-gvas-handler"
+name = "unrealsave-serializer"
 version = "0.1.0"
 
 [lib]
-name = "ue_gvas_handler"
-path = "src/bridge.rs"
+name = "unrealsaveserializer"
+path = "src/unrealsave-serializer.rs"
 crate-type = ["cdylib"]
 
 [dependencies]

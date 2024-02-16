@@ -23,7 +23,6 @@ public static class SavFileHandler
         }
 
         await using var stream = File.OpenRead(filepath);
-        var length = new FileInfo(filepath).Length;
 
         stream.Seek(0, SeekOrigin.Begin);
 
