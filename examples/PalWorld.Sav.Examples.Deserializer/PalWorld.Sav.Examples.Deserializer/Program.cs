@@ -1,5 +1,3 @@
-﻿
-
 using System;
 using PalWorld.Sav.Serializer;
 using System.Collections.Generic;
