@@ -109,7 +109,7 @@ Returns:
 - A pointer to the serialized data in the Unreal Engine GVAS format.
 */
 #[no_mangle]
-pub extern "C" fn serialize(json: *const c_char,  size: *mut usize) -> *mut c_void {
+pub extern "C" fn serialize(json: *const c_char,  size: *mut usize, cap: *mut usize) -> *mut c_void {
     let json = unsafe { CStr::from_ptr(json).to_string_lossy().into_owned() };
     let decoded: Save = serde_json::from_str(&json).unwrap();
     let mut writer: Vec<u8> = Vec::new();
@@ -118,10 +118,14 @@ pub extern "C" fn serialize(json: *const c_char,  size: *mut usize) -> *mut c_vo
     // Convert the Vec<u8> to a raw pointer
     let ptr = writer.as_ptr();
     let len = writer.len();
+    let capacity = writer.capacity();
     std::mem::forget(writer);
 
     // Set the size
-    unsafe { *size = len; }
+    unsafe { 
+        *size = len; 
+        *cap = capacity;
+    }
 
     ptr as *mut c_void
 }
@@ -139,9 +143,9 @@ pub extern "C" fn free_rust_string(s: *mut c_char) {
 // Function to free memory allocated for a Rust vector
 // This function is used to free the memory allocated for a Rust vector.
 #[no_mangle]
-pub extern "C" fn free_rust_vec(p: *mut c_void) {
+pub extern "C" fn free_rust_vec(p: *mut c_void, len: usize, cap: usize) {
     unsafe {
         if p.is_null() { return }
-        Vec::from_raw_parts(p, 0, 1);
+        let _ = Vec::from_raw_parts(p as *mut u8, len, cap);
     };
 }

@@ -60,14 +60,28 @@ public static class UeSave
         var result = await Task.Run(() =>
         {
             UIntPtr size;
-            IntPtr ptr = InternalBridge.serialize(json, out size);
-            return (ptr, size);
+            UIntPtr capacity;
+            IntPtr ptr = InternalBridge.serialize(json, out size, out capacity);
+            
+            if (ptr == IntPtr.Zero)
+            {
+                throw new InvalidOperationException("Failed to serialize the JSON.");
+            }
+            
+            return (ptr, size, capacity);
         });
 
         // Convert the result to a byte array
         byte[] serializedData = new byte[result.size.ToUInt32()];
-        Marshal.Copy(result.ptr, serializedData, 0, serializedData.Length);
-        InternalBridge.free_rust_vec(result.ptr);
+        try
+        {
+            Marshal.Copy(result.ptr, serializedData, 0, serializedData.Length);
+        }
+        finally
+        {
+            InternalBridge.free_rust_vec(result.ptr, result.size, result.capacity);
+        }
+        
 
         return serializedData;
     }
@@ -84,16 +98,16 @@ public static class UeSave
 
     private static class InternalBridge
     {
-        [DllImport("ue_gvas_handler.dll")]
+        [DllImport("ue_gvas_handler.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr deserialize(IntPtr buffer, UIntPtr size, KeyValuePair[] map, int mapLength);
 
         [DllImport("ue_gvas_handler.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr serialize(string data, out UIntPtr size);
+        public static extern IntPtr serialize(string data, out UIntPtr size, out UIntPtr capacity);
 
-        [DllImport("ue_gvas_handler.dll")]
+        [DllImport("ue_gvas_handler.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void free_rust_string(IntPtr s);
-            
-        [DllImport("ue_gvas_handler.dll")]
-        public static extern void free_rust_vec(IntPtr p);
+
+        [DllImport("ue_gvas_handler.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void free_rust_vec(IntPtr p, UIntPtr size, UIntPtr cap);
     }
 }
