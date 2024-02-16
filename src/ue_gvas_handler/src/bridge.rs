@@ -104,6 +104,7 @@ This pointer can be used in C code and should be deallocated using the `free_rus
 Parameters:
 - json: A pointer to a Unreal Engine JSON string that represents a Rust structure.
 - size: A pointer to a variable where the size of the serialized data will be stored.
+- capacity: A pointer to a variable where the capacity of the serialized data will be stored.
 
 Returns:
 - A pointer to the serialized data in the Unreal Engine GVAS format.
