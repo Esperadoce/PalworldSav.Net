@@ -8,14 +8,14 @@ namespace PalWorld.Sav.Serializer;
 /// <summary>
 /// Handles .sav files.
 /// </summary>
-public class SavFileHandler
+public static class SavFileHandler
 {
     /// <summary>
     /// Analyses the .sav file.
     /// </summary>
     /// <param name="filepath">The path to the .sav file.</param>
     /// <returns>A SavFileFormat object representing the .sav file.</returns>
-    public async Task<SavFileFormat> AnalyseSavAsync(string filepath)
+    public static async Task<SavFileFormat> AnalyseSavAsync(string filepath)
     {
         if (string.IsNullOrEmpty(filepath))
         {
@@ -55,7 +55,7 @@ public class SavFileHandler
         return new SavFileFormat(filepath, lenDecompressed, lenCompressed, magic, decompressedData);
     }
 
-    private async Task<int> ReadIntAsync(Stream stream)
+    private static async Task<int> ReadIntAsync(Stream stream)
     {
         var buffer = new byte[sizeof(int)];
         await stream.ReadExactlyAsync(buffer, 0, sizeof(int));

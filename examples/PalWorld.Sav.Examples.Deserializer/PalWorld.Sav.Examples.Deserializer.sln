@@ -7,6 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PalWorld.Sav.Examples.Deser
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PalWorld.Sav.Serializer", "..\..\src\PalWorld.Sav.Serializer\PalWorld.Sav.Serializer.csproj", "{68330614-49F0-40DF-B9D5-52FB6357AB59}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples-Sav-Files", "Examples-Sav-Files", "{B9AF6E1E-FA7C-4776-AD17-C8B7579F6F2F}"
+	ProjectSection(SolutionItems) = preProject
+		Examples-Sav-Files\LevelMeta.sav = Examples-Sav-Files\LevelMeta.sav
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

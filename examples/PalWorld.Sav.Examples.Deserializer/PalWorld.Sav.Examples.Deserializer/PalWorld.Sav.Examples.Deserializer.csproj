@@ -7,4 +7,12 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+		<Exec Command="copy /Y ..\Examples-Sav-Files\*.sav $(OutDir)" />
+		<Exec Command="copy /Y ..\..\..\src\ue_gvas_handler\target\release\ue_gvas_handler.dll $(OutDir)" />
+	</Target>
+	<ItemGroup>
+	  <ProjectReference Include="..\..\..\src\PalWorld.Sav.Serializer\PalWorld.Sav.Serializer.csproj" />
+	</ItemGroup>
+
 </Project>
