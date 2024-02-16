@@ -5,9 +5,9 @@ namespace PalWorld.Sav.Serializer;
 /// <summary>
 /// Represents a .sav binary file format.
 /// </summary>
-public class SavFileFormat
+public class SavFileFormatReader
 {
-    public SavFileFormat(string filePath, int lenDecompressed, int lenCompressed, int magic,
+    public SavFileFormatReader(string filePath, int lenDecompressed, int lenCompressed, int magic,
         Memory<byte> decompressedData)
     {
         FilePath = filePath;

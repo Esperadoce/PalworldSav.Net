@@ -128,12 +128,12 @@ public static class UeSave
         );
 
         [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr serialize(string data, out UIntPtr size);
+        public static extern IntPtr serialize(string data, out UIntPtr size, out UIntPtr capacity);
 
         [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl)]
         public static extern void free_rust_string(IntPtr s);
 
         [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void free_rust_vec(IntPtr p);
+        public static extern void free_rust_vec(IntPtr p, UIntPtr size, UIntPtr cap);
     }
 }
