@@ -85,33 +85,3 @@ pub extern "C" fn free_rust_vec(p: *mut c_void) {
         Vec::from_raw_parts(p, 0, 1);
     };
 }
-
-
-// #[no_mangle]
-// pub extern "C" fn deserialize(buffer: *const c_void, size: libc::size_t, map: HashMap<String, String>) -> *mut c_char {
-//     // Convert the raw buffer to a byte slice
-//     let buffer = unsafe { std::slice::from_raw_parts(buffer as *const u8, size as usize) };
-
-//     let mut types = Types::new();
-
-//     for (key, value) in map {
-//         types.add(key, StructType::Struct(Some(value)));
-//     }
-
-//     let mut file = Cursor::new(buffer);
-
-//     let save = Save::read_with_types(&mut file, &types);
-
-//     if save.is_err() {
-//         panic!("{}", save.err().unwrap().to_string());
-//     }
-
-//     let encoded = serde_json::to_string(&save.unwrap());
-//     if encoded.is_err() {
-//         panic!("{}", encoded.err().unwrap().to_string());
-//     }
-
-//     // Convert the Rust String to a C string
-//     let c_str = CString::new(encoded.unwrap()).unwrap();
-//     c_str.into_raw()
-// }
