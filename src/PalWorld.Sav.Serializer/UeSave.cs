@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -28,25 +28,26 @@ public static class UeSave
             throw new ArgumentException("Map cannot be null or empty.", nameof(map));
         }
 
-        var handle = GCHandle.Alloc(data, GCHandleType.Pinned);
-        var pointer = handle.AddrOfPinnedObject();
+        GCHandle handle = GCHandle.Alloc(data, GCHandleType.Pinned);
+        try
+        {
+            IntPtr pointer = handle.AddrOfPinnedObject();
 
-        var result = await Task.Run(
-            () =>
-                InternalBridge.deserialize(
-                    pointer,
-                    (UIntPtr)data.Length,
-                    map.Select(kv => new KeyValuePair { Key = kv.Key, Value = kv.Value }).ToArray(),
-                    map.Count
-                )
-        );
+            // Call the deserialize function on a separate thread
+            IntPtr result = await Task.Run(() =>
+                InternalBridge.deserialize(pointer, (UIntPtr)data.Length, map.Select(kv => new KeyValuePair { Key = kv.Key, Value = kv.Value }).ToArray(), map.Count));
 
-        var resultString = Marshal.PtrToStringAnsi(result);
+            string? resultString = Marshal.PtrToStringAnsi(result);
 
-        InternalBridge.free_rust_string(result);
-        handle.Free();
+            InternalBridge.free_rust_string(result);
+        
+            return resultString;
+        }
+        finally
+        {
+            handle.Free();
+        }
 
-        return resultString;
     }
 
     /// <summary>
@@ -63,13 +64,29 @@ public static class UeSave
 
         var result = await Task.Run(() =>
         {
-            var ptr = InternalBridge.serialize(json, out var size);
-            return (ptr, size);
+            UIntPtr size;
+            UIntPtr capacity;
+            IntPtr ptr = InternalBridge.serialize(json, out size, out capacity);
+            
+            if (ptr == IntPtr.Zero)
+            {
+                throw new InvalidOperationException("Failed to serialize the JSON.");
+            }
+            
+            return (ptr, size, capacity);
         });
 
-        var serializedData = new byte[result.size.ToUInt32()];
-        Marshal.Copy(result.ptr, serializedData, 0, serializedData.Length);
-        InternalBridge.free_rust_vec(result.ptr);
+        // Convert the result to a byte array
+        byte[] serializedData = new byte[result.size.ToUInt32()];
+        try
+        {
+            Marshal.Copy(result.ptr, serializedData, 0, serializedData.Length);
+        }
+        finally
+        {
+            InternalBridge.free_rust_vec(result.ptr, result.size, result.capacity);
+        }
+        
 
         return serializedData;
     }
