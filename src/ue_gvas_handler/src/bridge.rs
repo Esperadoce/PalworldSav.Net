@@ -2,8 +2,8 @@
 This Rust library provides a C-compatible Foreign Function Interface (FFI) for handling Unreal Engine GVAS format data.
 
 Features:
-- Deserialization: Transforms Unreal Engine GVAS format data into a Rust structure via FFI.
-- Serialization: Converts a Rust structure back into Unreal Engine GVAS format via FFI.
+- Deserialization: Transforms Unreal Engine GVAS format data into a Json string via FFI.
+- Serialization: Converts a Json string back into Unreal Engine GVAS format via FFI.
 - Memory Management: Includes FFI functions to deallocate memory for Rust strings and vectors.
 
 Designed specifically for scenarios requiring interaction with Unreal Engine GVAS format data in a C-compatible FFI and Rust mixed environment.
