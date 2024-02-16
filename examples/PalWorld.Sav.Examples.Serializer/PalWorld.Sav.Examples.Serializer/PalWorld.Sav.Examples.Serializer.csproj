@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>false</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+	
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+		<Exec Command="copy /Y ..\..\..\src\ue_gvas_handler\target\release\ue_gvas_handler.dll $(OutDir)" />
+  </Target>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\PalWorld.Sav.Serializer\PalWorld.Sav.Serializer.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="example.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

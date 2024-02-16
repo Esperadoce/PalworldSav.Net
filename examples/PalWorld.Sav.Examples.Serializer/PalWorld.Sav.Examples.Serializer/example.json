@@ -1,0 +1,50 @@
+{
+  "header": {
+    "magic": 1396790855,
+    "save_game_version": 3,
+    "package_version": { "New": [ 522, 1008 ] },
+    "engine_version_major": 5,
+    "engine_version_minor": 1,
+    "engine_version_patch": 1,
+    "engine_version_build": 0,
+    "engine_version": "++UE5+Release-5.1",
+    "custom_format_version": 3,
+    "custom_format": [
+      {
+        "id": "40d2fba7-4b48-4ce5-b038-5a75884e499e",
+        "value": 7
+      },
+      "...",
+      {
+        "id": "ab965196-45d8-08fc-b7d7-228d78ad569e",
+        "value": 1
+      }
+    ]
+  },
+  "root": {
+    "save_game_type": "/Script/Pal.PalWorldBaseInfoSaveGame",
+    "properties": {
+      "Version": { "Int": { "value": 100 } },
+      "Timestamp": {
+        "Struct": {
+          "value": { "DateTime": 638433665394060000 },
+          "struct_type": "DateTime",
+          "struct_id": "00000000-0000-0000-0000-000000000000"
+        }
+      },
+      "SaveData": {
+        "Struct": {
+          "value": {
+            "Struct": {
+              "WorldName": { "Str": { "value": "Autosave_W" } },
+              "InGameDay": { "Int": { "value": 682 } }
+            }
+          },
+          "struct_type": { "Struct": "PalWorldBaseInfoSaveData" },
+          "struct_id": "00000000-0000-0000-0000-000000000000"
+        }
+      }
+    },
+    "extra": [ 0, 0, 0, 0 ]
+  }
+}
