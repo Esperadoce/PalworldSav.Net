@@ -10,11 +10,21 @@ namespace PalWorld.Sav.Serializer;
 /// </summary>
 public static class SavFileHandler
 {
+    private const int BufferSize = 4194304;
+    private const int ZlibHeader1 = 0x78;
+    private const int ZlibHeader2 = 0x9C;
+    private const int MagicNumber1 = 0x32;
+    private const int MagicNumber2 = 0x31;
+    private const int MagicConstant = 0x31323334;
+
     /// <summary>
     /// Analyses the .sav file.
     /// </summary>
     /// <param name="filepath">The path to the .sav file.</param>
     /// <returns>A SavFileFormat object representing the .sav file.</returns>
+    /// <exception cref="ArgumentException">Thrown when the provided filepath is null or empty.</exception>
+    /// <exception cref="InvalidDataException">Thrown when the zlib header in the file is incorrect.</exception>
+    /// <exception cref="NotSupportedException">Thrown when the magic number in the file is unsupported.</exception>
     public static async Task<SavFileFormatReader> AnalyseSavAsync(string filepath)
     {
         if (string.IsNullOrEmpty(filepath))
@@ -33,13 +43,13 @@ public static class SavFileHandler
 
         byte[] decompressedData;
         byte zlibHeader = (byte)stream.ReadByte();
-        if (zlibHeader != 0x78 && zlibHeader != 0x9C) //zlib header
-            throw new Exception("Incorrect zlib header");
+        if (zlibHeader != ZlibHeader1 && zlibHeader != ZlibHeader2) //zlib header
+            throw new InvalidDataException("Incorrect zlib header");
 
         switch (magic >> 24)
         {
-            case 0x32:
-            case 0x31:
+            case MagicNumber1:
+            case MagicNumber2:
                 await using (var deflateStream = new DeflateStream(stream, CompressionMode.Decompress, true))
                 {
                     using var result = new MemoryStream();
@@ -49,7 +59,7 @@ public static class SavFileHandler
 
                 break;
             default:
-                throw new Exception("Unsupported magic number.");
+                throw new NotSupportedException("Unsupported magic number.");
         }
 
         return new SavFileFormatReader(filepath, lenDecompressed, lenCompressed, magic, decompressedData);
@@ -60,17 +70,17 @@ public static class SavFileHandler
     /// </summary>
     /// <param name="savFileFormat">The SaveFileFormatWriter object containing the data to write.</param>
     /// <param name="overwrite">Whether to overwrite the file if it already exists. Defaults to false.</param>
+    /// <exception cref="IOException">Thrown when the file already exists and overwrite is set to false.</exception>
     public static async Task WriteSavAsync(SaveFileFormatWriter savFileFormat, bool overwrite = false)
     {
         // Check if the file already exists and if we should not overwrite it
         if (File.Exists(savFileFormat.FilePath) && !overwrite)
         {
-            throw new Exception("File already exists.");
+            throw new IOException($"The file at path {savFileFormat.FilePath} already exists and overwrite is set to false.");
         }
 
         // Create a file stream with a buffer size of 4MB
-        const int bufferSize = 4194304;
-        await using var fileStream = new FileStream(savFileFormat.FilePath, FileMode.Create, FileAccess.ReadWrite, FileShare.None, bufferSize, FileOptions.Asynchronous);
+        await using var fileStream = new FileStream(savFileFormat.FilePath, FileMode.Create, FileAccess.ReadWrite, FileShare.None, BufferSize, FileOptions.Asynchronous);
 
         // Write the decompressed data to a temporary memory stream
         await using var tmpMemoryStream = new MemoryStream(savFileFormat.DecompressedData.ToArray());
@@ -85,20 +95,21 @@ public static class SavFileHandler
         var lenDecompressed = savFileFormat.DecompressedData.Length;
         var lenCompressed = (int)compressedMemoryStream.Length;
 
-        // Define some constants
-        int magic = 0x31323334;
-        byte zlibHeader = 0x78;
-
         // Write the lengths and constants to the file stream
         await WriteIntAsync(fileStream, lenDecompressed);
         await WriteIntAsync(fileStream, lenCompressed);
-        await WriteIntAsync(fileStream, magic);
-        await fileStream.WriteAsync(new byte[] { zlibHeader }, 0, 1);
+        await WriteIntAsync(fileStream, MagicConstant);
+        await fileStream.WriteAsync([ZlibHeader1], 0, 1);
 
         // Write the compressed data to the file stream
         await compressedMemoryStream.CopyToAsync(fileStream);
     }
 
+    /// <summary>
+    /// Reads an integer from the provided stream asynchronously.
+    /// </summary>
+    /// <param name="stream">The stream to read from.</param>
+    /// <returns>The integer read from the stream.</returns>
     private static async Task<int> ReadIntAsync(Stream stream)
     {
         var buffer = new byte[sizeof(int)];
@@ -106,6 +117,11 @@ public static class SavFileHandler
         return BitConverter.ToInt32(buffer, 0);
     }
 
+    /// <summary>
+    /// Writes an integer to the provided stream asynchronously.
+    /// </summary>
+    /// <param name="stream">The stream to write to.</param>
+    /// <param name="value">The integer value to write.</param>
     private static async Task WriteIntAsync(Stream stream, int value)
     {
 
