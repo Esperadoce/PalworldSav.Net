@@ -1,10 +1,8 @@
-using System;
-using PalWorld.Sav.Serializer;
-using System.Collections.Generic;
+﻿using PalWorld.Sav.Serializer;
 
-var result = await SavFileHandler.AnalyseSavAsync("LevelMeta.sav");
+var result = await SavFileHandler.AnalyseSavAsync(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "samples/LevelMeta.sav"));
 
-Console.WriteLine($"Sav File Data : {result}");
+Console.WriteLine($"Save File Data : {result}");
 
 var dictionary = new Dictionary<string, string>
 {

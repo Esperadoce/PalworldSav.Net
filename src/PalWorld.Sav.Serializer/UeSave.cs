@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -11,7 +11,6 @@ namespace PalWorld.Sav.Serializer;
 /// </summary>
 public static class UeSave
 {
-    
     /// <summary>
     /// Deserializes the provided data using the provided map.
     /// </summary>
@@ -63,7 +62,6 @@ public static class UeSave
             throw new ArgumentException("JSON string cannot be null or empty.", nameof(json));
         }
 
-        // Call the serialize function on a separate thread
         var result = await Task.Run(() =>
         {
             UIntPtr size;
@@ -105,16 +103,37 @@ public static class UeSave
 
     private static class InternalBridge
     {
-        [DllImport("ue_gvas_handler.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr deserialize(IntPtr buffer, UIntPtr size, KeyValuePair[] map, int mapLength);
+        private const string LibraryName = "unrealsaveserializer";
 
-        [DllImport("ue_gvas_handler.dll", CallingConvention = CallingConvention.Cdecl)]
+        static InternalBridge()
+        {
+            if (Environment.OSVersion.Platform == PlatformID.Unix)
+            {
+                NativeLibrary.SetDllImportResolver(
+                    typeof(InternalBridge).Assembly,
+                    (name, assembly, path) =>
+                        name == LibraryName
+                            ? NativeLibrary.Load("lib" + name, assembly, path)
+                            : IntPtr.Zero
+                );
+            }
+        }
+
+        [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern IntPtr deserialize(
+            IntPtr buffer,
+            UIntPtr size,
+            KeyValuePair[] map,
+            int mapLength
+        );
+
+        [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr serialize(string data, out UIntPtr size, out UIntPtr capacity);
 
-        [DllImport("ue_gvas_handler.dll", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl)]
         public static extern void free_rust_string(IntPtr s);
 
-        [DllImport("ue_gvas_handler.dll", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl)]
         public static extern void free_rust_vec(IntPtr p, UIntPtr size, UIntPtr cap);
     }
 }

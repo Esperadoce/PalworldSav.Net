@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <LangVersion>latestmajor</LangVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\src\PalWorld.Sav.Serializer\PalWorld.Sav.Serializer.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="samples\LevelMeta.sav">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
+    <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+        <Copy SourceFiles="../../src/UnrealSave-Serializer/target/release/libunrealsaveserializer.so" DestinationFolder="$(OutDir)" />
+        <Copy SourceFiles="../../src/UnrealSave-Serializer/target/x86_64-pc-windows-gnu/release/unrealsaveserializer.dll" DestinationFolder="$(OutDir)" />
+    </Target>
+
+</Project>
