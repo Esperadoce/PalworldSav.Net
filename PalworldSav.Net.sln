@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{A2AD5E80-EE6F-4C20-9AEE-F33AFE045672}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{373922D1-F62D-4F94-A161-2C27A48D9CF1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PalWorldSav.Deserializer.Example", "examples\PalWorldSav.Deserializer.Example\PalWorldSav.Deserializer.Example.csproj", "{CBD2EE2B-AC4C-4978-B888-50F5CAEB646A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PalWorld.Sav.Serializer", "src\PalWorld.Sav.Serializer\PalWorld.Sav.Serializer.csproj", "{626A831F-EB9D-4DC3-9B77-7DB4B8F6C00F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{CBD2EE2B-AC4C-4978-B888-50F5CAEB646A} = {373922D1-F62D-4F94-A161-2C27A48D9CF1}
+		{626A831F-EB9D-4DC3-9B77-7DB4B8F6C00F} = {A2AD5E80-EE6F-4C20-9AEE-F33AFE045672}
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CBD2EE2B-AC4C-4978-B888-50F5CAEB646A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CBD2EE2B-AC4C-4978-B888-50F5CAEB646A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CBD2EE2B-AC4C-4978-B888-50F5CAEB646A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CBD2EE2B-AC4C-4978-B888-50F5CAEB646A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{626A831F-EB9D-4DC3-9B77-7DB4B8F6C00F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{626A831F-EB9D-4DC3-9B77-7DB4B8F6C00F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{626A831F-EB9D-4DC3-9B77-7DB4B8F6C00F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{626A831F-EB9D-4DC3-9B77-7DB4B8F6C00F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

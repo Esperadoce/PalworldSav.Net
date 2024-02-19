@@ -4,9 +4,16 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <LangVersion>latestmajor</LangVersion>
   </PropertyGroup>
 
-	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-		<Exec Command="copy /Y ..\ue_gvas_handler\target\release\ue_gvas_handler.dll $(OutDir)" />
-	</Target>
+  <!-- Requires rustup target add x86_64-pc-windows-gnu -->
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="cargo build --manifest-path ../UnrealSave-Serializer/Cargo.toml --release" />
+    <Exec Command="cargo build --manifest-path ../UnrealSave-Serializer/Cargo.toml --release --target x86_64-pc-windows-gnu" />
+    <Copy SourceFiles="../UnrealSave-Serializer/target/release/libunrealsaveserializer.so" DestinationFolder="$(OutDir)" />
+    <Copy SourceFiles="../UnrealSave-Serializer/target/x86_64-pc-windows-gnu/release/unrealsaveserializer.dll" DestinationFolder="$(OutDir)" />
+  </Target>
+
+
 </Project>
