@@ -9,11 +9,11 @@
 
   <!-- Requires rustup target add x86_64-pc-windows-gnu -->
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="cargo build --manifest-path ../UnrealSave-Serializer/Cargo.toml --release" />
-    <Exec Command="cargo build --manifest-path ../UnrealSave-Serializer/Cargo.toml --release --target x86_64-pc-windows-gnu" />
-    <Copy SourceFiles="../UnrealSave-Serializer/target/release/libunrealsaveserializer.so" DestinationFolder="$(OutDir)" />
-    <Copy SourceFiles="../UnrealSave-Serializer/target/x86_64-pc-windows-gnu/release/unrealsaveserializer.dll" DestinationFolder="$(OutDir)" />
+    <Exec Command="cargo build --manifest-path ../UnrealSave-Serializer/Cargo.toml --release" Condition=" '$(OS)' != 'Windows_NT' " />
+    <Copy SourceFiles="../UnrealSave-Serializer/target/release/libunrealsaveserializer.so" DestinationFolder="$(OutDir)" Condition=" '$(OS)' != 'Windows_NT' " />
+	<Exec Command="cargo build --manifest-path ../UnrealSave-Serializer/Cargo.toml --release --target x86_64-pc-windows-gnu" Condition="$([MSBuild]::IsOSPlatform('Linux'))"  />
+    <Copy SourceFiles="../UnrealSave-Serializer/target/x86_64-pc-windows-gnu/release/unrealsaveserializer.dll" DestinationFolder="$(OutDir)" Condition="$([MSBuild]::IsOSPlatform('Linux'))"  />
+ 	
   </Target>
-
 
 </Project>
