@@ -82,12 +82,15 @@ public static class SavFileHandler
 
         // Write the decompressed data to a temporary memory stream
         await using var tmpMemoryStream = new MemoryStream(savFileFormat.DecompressedData.ToArray());
-        // Compress the data using GZip
-        await using var gzipStream = new GZipStream(tmpMemoryStream, CompressionMode.Compress, true);
 
-        // Write the compressed data to a new memory stream
+        // Compress the data using Deflate (zlib)
         await using var compressedMemoryStream = new MemoryStream();
-        await gzipStream.CopyToAsync(compressedMemoryStream);
+        await using (var deflateStream = new DeflateStream(compressedMemoryStream, CompressionLevel.SmallestSize, true))
+        {
+            tmpMemoryStream.Position = 0;
+            await tmpMemoryStream.CopyToAsync(deflateStream);
+        }
+        compressedMemoryStream.Position = 0;
 
         // Get the lengths of the decompressed and compressed data
         var lenDecompressed = savFileFormat.DecompressedData.Length;
